@@ -403,8 +403,8 @@ static void* ap_com_task(void* arg)
 	unsigned int infolen = 0;
 	unsigned int recvLen = 0;
 	unsigned char* recvData = NULL;
-	unsigned char TXD[SERIAL_MAXLEN+13] = {0};
-	unsigned char RXD[SERIAL_MAXLEN+13] = {0};
+	unsigned char TXD[SERIAL_MAXLEN] = {0};
+	unsigned char RXD[SERIAL_MAXLEN] = {0};
 	char buf[BUFSIZE];
 
     int result = 0;
@@ -486,7 +486,7 @@ static void* ap_com_task(void* arg)
 					pthread_cond_signal(&queue_cv);
 					pthread_mutex_unlock(&queue_cs);
 				   	pthread_mutex_unlock(&get_lock_mux);
-					memset(RXD,0,SERIAL_MAXLEN+13);
+					memset(RXD,0,SERIAL_MAXLEN);
 					continue;
 				}
 
@@ -503,8 +503,8 @@ static void* ap_com_task(void* arg)
 					}
 					recvLen = 0;
 					LOGE("malloc recvData");
-					recvData = malloc((packmax + 1) * 1024);
-					memset(recvData,0x00,(packmax + 1) * 1024);
+					recvData = malloc((packmax + 1) * 512);
+					memset(recvData,0x00,(packmax + 1) * 512);
 				}
 
 				memcpy(recvData + recvLen,&RXD[DATA],infolen);
@@ -517,7 +517,7 @@ static void* ap_com_task(void* arg)
 					char info = 0x00;
 					int dataLen = 1;
 					SkySendData(cmd,&info,dataLen);
-					memset(RXD,0,SERIAL_MAXLEN+13);
+					memset(RXD,0,SERIAL_MAXLEN);
 				   	pthread_mutex_unlock(&get_lock_mux);
 					continue;
 				}
@@ -535,7 +535,7 @@ static void* ap_com_task(void* arg)
 					LOGE("free recvData");
 					recvLen = 0;
 					len = 0;
-					memset(RXD,0,SERIAL_MAXLEN+13);
+					memset(RXD,0,SERIAL_MAXLEN);
 					if(recvData != NULL)
 					{
 						free(recvData);
